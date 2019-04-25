@@ -176,7 +176,7 @@ Stack:
 
 # Unresolved questions
 
-暂无。
+* 多语言
 
 # Ref
 
