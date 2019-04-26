@@ -162,6 +162,51 @@ Stack:
 
 ![](https://cdn.nlark.com/yuque/0/2019/png/86025/1556187981500-1be51415-c892-4eea-a320-b8e6131d1bf5.png)
 
+示例代码：
+
+```js
+const chalk = require('chalk');
+
+const ERROR_MAP = {
+  '10001': {
+    tip: 'UglifyJS 问题请参考文章解决 https://github.com/sorrycc/blog/issues/83',
+  },
+}
+
+class UmiError extends Error {
+  constructor(opts, ...params) {
+    const { message, tip, code } = opts;
+    super(message, ...params);
+    this.code = code;
+    this.tip = tip;
+  }
+}
+
+function foo() {
+  throw new UmiError({
+    code: 10001,
+    message: 'Failed to minify the bundle. Error: 0.0f3f4c41.async.js from UglifyJs',
+  });
+}
+
+function printError(e) {
+  const { tip } = ERROR_MAP[e.code];
+  console.error(chalk.red.bold(`Error: ${e.message}`));
+  console.error(`${chalk.magenta('Error Code: ')}${e.code}`);
+  console.error(`${chalk.cyan('Tips: ')}\n    ${tip}`);
+  console.error(`Stack:`);
+  console.error(e.stack.split('\n').slice(1).join('\n'));
+}
+
+try {
+  foo();
+} catch(e) {
+  printError(e);
+}
+```
+
+
+
 # How We Teach This
 
 不需要。
