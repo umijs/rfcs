@@ -1,5 +1,6 @@
 - Start Date: 2019-04-25
-- RFC PR: (leave this empty)
+- RFC PR:
+  - [add import from umi by xiaohuoni · Pull Request #2336 · umijs/umi · GitHub](https://github.com/umijs/umi/pull/2336)
 - Umi Issue: (leave this empty)
 
 # Summary
