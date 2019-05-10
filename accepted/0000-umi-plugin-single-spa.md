@@ -88,6 +88,7 @@ Config Entry 是相对于 HTML Entry 而言的，HTML Entry 的方式是在运�
           // 外链
           {
             src: '/path/to/a.js',
+            isEntry: true,
           },
           // 外链的简写
           '/path/to/a.js',
@@ -128,13 +129,30 @@ Config Entry 是相对于 HTML Entry 而言的，HTML Entry 的方式是在运�
 
 #### entry.scripts
 
+script 的属性有：
+
+- src
+- content
+- isEntry，是否为入口
+
 #### entry.styles
 
 ### 按需加载
 
-根据 Config Entry 的配置，在激活页面时加载响应的 JS 和 CSS。（如果支持 HTML Entry，需先加载 HTML 解析拿到 Config Entry）
+根据 Config Entry 的配置，在激活页面时加载相应的 JS 和 CSS。（如果支持 HTML Entry，需先加载 HTML 解析拿到 Config Entry）
 
+实现上先基于 [import-html-entry](https://github.com/kuitos/import-html-entry) 的方案来做，fetch 拿到内容，`eval` 执行。（后续看看还有没有更好的方案，比如 amd）
 
+基本流程：
+
+1. 获取外链的 JS 和 CSS 内容，把 `{ src }` 或 `{ href }` 转化为 `{ content }`
+2. 执行 JS 和挂载 CSS
+
+获取外链内容需要做缓存，可能多个子应用外链了同一个 url 的文件。（进而还可以做本地持久化，因为 cdn 上的文件是不可覆盖的，不存在更新问题）
+
+由于 JS 执行需要拿到 entry 文件 export 的生命周期方法，所以需要特殊处理。事先记录 window 对象属性，事后比对 window 对象属性，最后新增的 window 对象属性即 entry 文件 export 的内容。
+
+挂载 CSS 比较简单，在 `<head>` 标签里新增 `<style>` 实现。
 
 ### 父子应用通讯
 
