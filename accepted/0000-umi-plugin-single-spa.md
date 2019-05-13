@@ -32,7 +32,7 @@ SPA 的特点是一个代码仓库，一次构建，一次下载（可以按需�
 
 ## 使用
 
-主应用配 `umi-plugin-single-spa/master`，
+主应用配 `umi-plugin-single-spa/master` 插件，
 
 ```js
 export default {
@@ -56,6 +56,17 @@ export default {
           },
         },
       ],
+    }],
+  ],
+}
+```
+
+子应用配 `umi-plugin-single-spa/slave` 插件，
+
+```js
+export default {
+  plugins: [
+    ['umi-plugin-single-spa/slave', {
     }],
   ],
 }
@@ -141,7 +152,7 @@ script 的属性有：
 
 根据 Config Entry 的配置，在激活页面时加载相应的 JS 和 CSS。（如果支持 HTML Entry，需先加载 HTML 解析拿到 Config Entry）
 
-实现上先基于 [import-html-entry](https://github.com/kuitos/import-html-entry) 的方案来做，fetch 拿到内容，`eval` 执行。（后续看看还有没有更好的方案，比如 amd）
+实现上先基于 [import-html-entry](https://github.com/kuitos/import-html-entry) 的方案来做，fetch 拿到内容，`eval` 执行。（后续看看还有没有更好的方案，比如 systemjs + amd 的方式）
 
 基本流程：
 
@@ -158,7 +169,38 @@ script 的属性有：
 
 > 子应用如何调父应用方法，以及父应用如何下发状态。
 
-分基于 dva 和不基于 dva 两种场景，基于 dva 可以让父子应用的 action 串起来。
+主应用里约定 `src/rootExports.js` 文件的内容会通过 `window.g_rootExports` 露出。
+
+在 mount 子应用时传入，子应用通过 Context 露出。
+
+#### React 组件
+
+子应用通过 `api.addUmiExports` export `useRootContext` 方法，
+
+```js
+import { useRootContext } from 'umi';
+const rootContext = useRootContext();
+```
+
+#### dva 的 state 获取
+
+子应用通过 `api.addUmiExports` export `getRootState` 和 `dispatchRootAction` 方法，具体实现来自主应用的 `window.g_rootExports`，
+
+使用方式如下：
+
+```js
+import { getRootState, dispatchRootAction } from 'umi';
+
+const state = getRootState();
+dispatchRootAction({
+  type: 'global/showErrorMessage',
+  payload: {},
+});
+```
+
+#### 其他场景
+
+直接用 `window.g_rootExports`。
 
 ### 公共依赖加载
 
@@ -187,6 +229,8 @@ script 的属性有：
 ### 子应用嵌套
 
 > 微前端如何嵌微前端，进阶用法。
+
+### 子应用调试
 
 # How We Teach This
 
