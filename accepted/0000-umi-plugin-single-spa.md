@@ -206,6 +206,51 @@ dispatchRootAction({
 
 > 大部分子应用都用到的资源怎么处理？
 
+#### 基本思路
+
+* 子应用做 external（可以用 auto-external 插件），把 react、antd 等提出来，cdn 模式，有一定规则
+* cdn 需 http/2
+* 主应用存 map 表，请求资源时做统一化处理，比如 antd@3.4.1 和 antd@3.3.4，都换成 antd@3.4.1
+
+#### 具体实现
+
+主应用提供 map 表配置，写入临时文件 `singleSpaScriptsMap.js`，应用中可通过 `@tmp/singleSpaScriptsMap` 取到，
+
+```js
+{
+  "scriptsMap": {
+    "antd": {
+      "3": "3.17.0"
+    },
+    "react: {
+      "16": "16.8.6"
+    }
+  }
+}
+```
+
+在按需加载时，请求前先做一个 unify 的处理，
+
+比如 antd，
+
+```
+https://gw.alipayobjects.com/os/lib/antd/3.13.0/dist/antd.js
+↓ ↓ ↓ ↓ ↓ ↓
+https://gw.alipayobjects.com/os/lib/antd/3.17.0/dist/antd.js
+
+https://gw.alipayobjects.com/os/lib/antd/3.13.0/dist/antd.css
+↓ ↓ ↓ ↓ ↓ ↓
+https://gw.alipayobjects.com/os/lib/antd/3.17.0/dist/antd.css
+```
+
+比如 react，
+
+```
+https://gw.alipayobjects.com/os/lib/react/16.3.0/umd/react.production.min.js
+↓ ↓ ↓ ↓ ↓ ↓
+https://gw.alipayobjects.com/os/lib/react/16.8.6/umd/react.production.min.js
+```
+
 ### HTML Entry
 
 > Config Entry 的进阶版，简化开发者使用，但把解析消耗留给了用户。
