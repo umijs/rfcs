@@ -251,6 +251,13 @@ https://gw.alipayobjects.com/os/lib/react/16.3.0/umd/react.production.min.js
 https://gw.alipayobjects.com/os/lib/react/16.8.6/umd/react.production.min.js
 ```
 
+这样，多个子应用请求的 antd 和 react 就有缓存了。
+
+#### 备选方案
+
+* 子应用 external + 主应用 script 加载资源（有更新问题）
+* amd + systemjs
+
 ### HTML Entry
 
 > Config Entry 的进阶版，简化开发者使用，但把解析消耗留给了用户。
