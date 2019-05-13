@@ -146,6 +146,8 @@ script 的属性有：
 - content
 - isEntry，是否为入口
 
+没有显式的 isEntry 标记，则最后一个 script 为 entry。
+
 #### entry.styles
 
 ### 按需加载
