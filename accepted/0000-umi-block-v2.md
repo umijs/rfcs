@@ -108,7 +108,7 @@ class NewPage extends Component {
       },
       "blocks": {
         "BlockA": "http://a.block.url",
-        "BlockB": "http://a.block.url",
+        "BlockB": "http://b.block.url",
       },
     }
   }
